@@ -1,11 +1,11 @@
 import fs from 'fs'
 import Joi from 'joi'
 import Movies from '../models/movies'
-import Genres from "../models/genres"
+import category from '../models/category';
 // Controller
 export const getAllMovies = async function (req, res) {
     try {
-        const movies = await Movies.find().populate("genresId");
+        const movies = await Movies.find().populate("categoryId");
 
         return res.status(201).json({
             message: "get all movies",
@@ -23,7 +23,11 @@ export const getAllMovies = async function (req, res) {
 export const getMovieById = async function (req, res) {
     const { id } = req.params
     try {
-        const movie = await Movies.findById(id)
+        const movie = await Movies.findById(id).populate(
+            "categoryId",
+            "-__v -products"
+          );
+        
         res.send(movie)
     } catch (err) {
         res.status(500).send({
@@ -50,8 +54,13 @@ const schema = Joi.object({
     genres: Joi.array().items(Joi.string()).min(1).required(),
     href: Joi.string().required(),
     extract: Joi.string().required(),
-    thumbnail: Joi.string().uri().required()
-  });
+    thumbnail: Joi.string().uri().required(),
+    categoryId: Joi
+    .string()
+    .required()
+    .messages({ "any.required": "Vui lòng nhập categoryId" }),
+});
+
 
 export const createMovie = async function (req, res) {
     try {
@@ -59,8 +68,8 @@ export const createMovie = async function (req, res) {
         if (!error) {
             const movie = await Movies.create(req.body);
             // Sau khi thêm mới phim, thì sẽ thêm id của phim đó vào 
-            // bảng Genres
-            await Genres.findByIdAndUpdate('64c9353c13416fd2c48c7de2', {
+            // bảng categoty
+            await category.findByIdAndUpdate('64c9353c13416fd2c48c7de2', {
                 $addToSet: {
                     movies: movie._id,
                     nameMovie: movie.title,
@@ -144,7 +153,7 @@ export const search = async(req,res) =>{
             });
         }
         return res.json({ 
-            message: "Kết quả tìm kiêm cho " + keyword,
+            message: "Kết quả tìm kiếm cho " + keyword,
             data: movies
          });
       } catch (err) {

@@ -7,12 +7,10 @@ const moviesSchema = new Schema({
     year: Number,
     genres: [String],
     extract: String,
-    genresId: 
-        [{
-            type: mongoose.Schema.ObjectId,
-            ref: "Genres",
-        }]
-    ,
+    categoryId: {
+        type: mongoose.Types.ObjectId,
+        ref: "Category",
+      },
     // castId:
     //     { type: mongoose.Schema.ObjectId, ref: "Cast" },
 

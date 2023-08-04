@@ -4,6 +4,7 @@ import bodyParser from 'body-parser'
 import movieRouter from './routers/movies'
 import GenresRouter from './routers/genres'
 import CastRouter from './routers/cast'
+import categoryRouter from './routers/category'
 import uploadRouter from './routers/upload'
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
@@ -40,7 +41,7 @@ app.use("/genres", GenresRouter)
 app.use("/cast", CastRouter)
 app.use("/upload", uploadRouter)
 app.use("/auth", userRouter)
-
+app.use("/categories",categoryRouter)
 mongoose.connect("mongodb://127.0.0.1:27017/web503")
     .then(() => console.log("Connect to DB successfully"))
 
